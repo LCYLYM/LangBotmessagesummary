@@ -1,42 +1,115 @@
-# HelloPlugin
+# 群聊分析助手
 
-<!--
-## 插件开发者详阅
+一个基于AI的群聊分析工具，支持自动记录消息、生成群聊总结、分析用户画像，并提供Web界面查看分析数据。
 
-### 开始
+## ✨ 功能特点
 
-此仓库是 LangBot 插件模板，您可以直接在 GitHub 仓库中点击右上角的 "Use this template" 以创建你的插件。  
-接下来按照以下步骤修改模板代码：
+- 📝 自动记录群聊消息和互动数据
+- 🤖 基于OpenAI的智能群聊总结
+- 👤 用户画像和行为分析
+- 📊 数据可视化和统计报表
+- 🌐 安全的Web数据查看界面
+- 🔔 飞书机器人实时推送通知
+- 🔐 完善的数据安全和访问控制
 
-#### 修改模板代码
+## 🚀 快速开始
 
-- 修改此文档顶部插件名称信息
-- 将此文档下方的`<插件发布仓库地址>`改为你的插件在 GitHub· 上的地址
-- 补充下方的`使用`章节内容
-- 修改`main.py`中的`@register`中的插件 名称、描述、版本、作者 等信息
-- 修改`main.py`中的`MyPlugin`类名为你的插件类名
-- 将插件所需依赖库写到`requirements.txt`中
-- 根据[插件开发教程](https://docs.langbot.app/plugin/dev/tutor.html)编写插件代码
-- 删除 README.md 中的注释内容
+### 环境要求
 
+- Python 3.7+
+- OpenAI API 密钥
+- 飞书机器人 Webhook
+- 基础的Linux/Windows操作系统
 
-#### 发布插件
+### 安装步骤
 
-推荐将插件上传到 GitHub 代码仓库，以便用户通过下方方式安装。   
-欢迎[提issue](https://github.com/RockChinQ/LangBot/issues/new?assignees=&labels=%E7%8B%AC%E7%AB%8B%E6%8F%92%E4%BB%B6&projects=&template=submit-plugin.yml&title=%5BPlugin%5D%3A+%E8%AF%B7%E6%B1%82%E7%99%BB%E8%AE%B0%E6%96%B0%E6%8F%92%E4%BB%B6)，将您的插件提交到[插件列表](https://github.com/stars/RockChinQ/lists/qchatgpt-%E6%8F%92%E4%BB%B6)
+1. 克隆仓库到本地
 
-下方是给用户看的内容，按需修改
--->
+**git clone [仓库地址]**
+**cd [项目目录]**
 
-## 安装
+2. 安装依赖包
 
-配置完成 [LangBot](https://github.com/RockChinQ/LangBot) 主程序后使用管理员账号向机器人发送命令即可安装：
+**pip install -r requirements.txt**
 
-```
-!plugin get <你的插件发布仓库地址>
-```
-或查看详细的[插件安装说明](https://docs.langbot.app/plugin/plugin-intro.html#%E6%8F%92%E4%BB%B6%E7%94%A8%E6%B3%95)
+3. 配置环境变量
 
-## 使用
+在系统中设置以下环境变量：
 
-<!-- 插件开发者自行填写插件使用说明 -->
+**OpenAI配置：**
+- OPENAI_API_BASE_URL="你的API地址"
+- OPENAI_API_KEY="你的API密钥"
+
+**飞书配置：**
+- FEISHU_WEBHOOK_URL="飞书webhook地址"
+
+**Web认证：**
+- WEB_AUTH_PASSWORD="访问密码"
+
+**群组配置：**
+- ALLOWED_GROUP_ID="允许使用命令的群组ID"
+
+## 📖 使用说明
+
+### 群聊命令
+
+- **总结** - 生成当前群聊的AI总结
+- **看看 @用户** - 分析指定用户的群聊画像
+
+### Web界面
+
+访问 **http://your-host:3300** 查看数据分析界面
+
+功能包括：
+- 按群组浏览消息记录
+- 查看历史总结内容
+- 浏览用户画像分析
+- 基础认证保护
+
+## 📂 数据存储
+
+所有数据以CSV格式存储：
+
+- 消息记录：**/app/data/chat_analyzer/daily_*.csv**
+- 用户画像：**/app/data/chat_analyzer/user_profiles/**
+- 总结记录：**/app/data/chat_analyzer/summary.csv**
+
+## ⚠️ 注意事项
+
+1. 请妥善保管配置信息，不要泄露API密钥
+2. 定期备份重要数据
+3. 遵守数据隐私保护规定
+4. 合理设置访问权限
+
+## 🔒 隐私保护
+
+- 所有数据本地存储
+- Web访问需要密码认证
+- 支持数据脱敏处理
+- 可配置群组访问权限
+
+## 📄 开源协议
+
+本项目采用 [CC BY-NC-SA 4.0](LICENSE) 协议开源：
+
+- 必须保留原作者署名
+- 禁止商业使用
+- 需要告知使用情况
+- 保持相同的许可证条款
+
+使用本项目代码时，请遵守以上规则并标注原作者信息。
+
+## 🤝 贡献指南
+
+欢迎提交Issue和Pull Request来改进项目。在贡献代码前，请确保：
+
+1. 遵守现有的代码风格
+2. 添加必要的测试和文档
+3. 更新CHANGELOG记录
+
+## 📞 联系方式
+
+如有问题或建议，欢迎通过以下方式联系：
+
+- 提交 Issue
+- 发送邮件至 [admin@loli.by]
