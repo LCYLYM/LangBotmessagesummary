@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>群聊分析系统</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- DataTables CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.8/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <!-- DatePicker CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .nav-tabs .nav-link {
+        color: #495057;
+      }
+      .nav-tabs .nav-link.active {
+        color: #0d6efd;
+      }
+      .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        margin-bottom: 1rem;
+      }
+      .stats-card {
+        transition: transform 0.2s;
+      }
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+      .table-responsive {
+        margin-top: 1rem;
+      }
+      .filter-section {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">群聊分析系统</a>
+      </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+      <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="messages-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#messages"
+            type="button"
+          >
+            群聊消息
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="summaries-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#summaries"
+            type="button"
+          >
+            总结历史
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="mainTabContent">
+        <!-- 群聊消息面板 -->
+        <div class="tab-pane fade show active" id="messages">
+          <div class="filter-section">
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">选择群组</label>
+                <select class="form-select" id="groupSelect">
+                  <option value="">全部群组</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">选择日期</label>
+                <input type="text" class="form-control" id="dateSelect" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                  <button class="btn btn-primary" id="exportMessages">
+                    导出消息记录
+                  </button>
+                  <button class="btn btn-primary" id="exportSummaries">
+                    导出总结历史
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card stats-card">
+                <div class="card-body">
+                  <h5 class="card-title">总消息数</h5>
+                  <h3 class="card-text" id="totalMessages">0</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card stats-card">
+                <div class="card-body">
+                  <h5 class="card-title">活跃用户数</h5>
+                  <h3 class="card-text" id="activeUsers">0</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card stats-card">
+                <div class="card-body">
+                  <h5 class="card-title">今日总结数</h5>
+                  <h3 class="card-text" id="todaySummaries">0</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped" id="messagesTable">
+                  <thead>
+                    <tr>
+                      <th>时间</th>
+                      <th>群组</th>
+                      <th>发送者</th>
+                      <th>内容</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 总结历史面板 -->
+        <div class="tab-pane fade" id="summaries">
+          <div class="filter-section">
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">选择群组</label>
+                <select class="form-select" id="summaryGroupSelect">
+                  <option value="">全部群组</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">总结类型</label>
+                <select class="form-select" id="summaryTypeSelect">
+                  <option value="">全部类型</option>
+                  <option value="auto">自动总结</option>
+                  <option value="manual">手动总结</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped" id="summariesTable">
+                  <thead>
+                    <tr>
+                      <th>时间</th>
+                      <th>群组</th>
+                      <th>类型</th>
+                      <th>内容</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- 首先加载 jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+
+    <!-- 然后加载其他依赖 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+    <!-- 添加CDN加载失败的备选方案 -->
+    <script>
+      window.jQuery ||
+        document.write(
+          '<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>'
+        );
+    </script>
+
+    <!-- 确保jQuery加载完成后再执行代码 -->
+    <script>
+      jQuery(function ($) {
+        // 使用 jQuery 而不是 $ 来确保可用性
+        // 初始化日期选择器
+        $("#dateSelect")
+          .datepicker({
+            format: "yyyymmdd",
+            language: "zh-CN",
+            autoclose: true,
+          })
+          .datepicker("setDate", new Date());
+
+        // 初始化数据表格
+        const messagesTable = $("#messagesTable").DataTable({
+          order: [[0, "desc"]],
+          pageLength: 25,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Chinese.json",
+          },
+        });
+
+        const summariesTable = $("#summariesTable").DataTable({
+          order: [[0, "desc"]],
+          pageLength: 25,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Chinese.json",
+          },
+        });
+
+        // 从消息数据中获取唯一的群组列表（只在首次加载时调用）
+        function initGroupSelect() {
+          const groupId = $("#groupSelect").val();
+          const date = $("#dateSelect").val();
+
+          $.get(`/messages?group_id=&date=${date}`, function (data) {
+            const groups = new Set();
+            data.forEach((msg) => {
+              if (msg.group_id) {
+                groups.add(msg.group_id);
+              }
+            });
+
+            const $select = $("#groupSelect");
+            $select.empty().append('<option value="">全部群组</option>');
+            Array.from(groups)
+              .sort()
+              .forEach((group) => {
+                $select.append(`<option value="${group}">${group}</option>`);
+              });
+
+            // 如果之前有选择的群组，恢复选择
+            if (groupId) {
+              $select.val(groupId);
+            }
+
+            // 加载初始数据
+            loadMessages();
+          });
+        }
+
+        // 加载消息数据（不再更新群组选择）
+        function loadMessages() {
+          const groupId = $("#groupSelect").val();
+          const date = $("#dateSelect").val();
+
+          $.get(`/messages?group_id=${groupId}&date=${date}`, function (data) {
+            messagesTable.clear();
+            data.forEach((msg) => {
+              messagesTable.row.add([
+                msg.timestamp,
+                msg.group_id,
+                msg.sender_name || msg.sender_id,
+                msg.text_message,
+              ]);
+            });
+            messagesTable.draw();
+
+            // 更新统计信息
+            $("#totalMessages").text(data.length);
+            $("#activeUsers").text(new Set(data.map((m) => m.sender_id)).size);
+          });
+        }
+
+        // 导出为CSV函数
+        function exportToCSV(data, filename) {
+          let csvContent = "data:text/csv;charset=utf-8,";
+
+          // 添加表头
+          const headers = Object.keys(data[0]);
+          csvContent += headers.join(",") + "\n";
+
+          // 添加数据行
+          data.forEach((row) => {
+            const values = headers.map((header) => {
+              const value = row[header] || "";
+              // 处理包含逗号、换行符或引号的值
+              return `"${value.toString().replace(/"/g, '""')}"`;
+            });
+            csvContent += values.join(",") + "\n";
+          });
+
+          // 创建下载链接
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", filename);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        // 导出消息记录
+        $("#exportMessages").click(function () {
+          const groupId = $("#groupSelect").val();
+          const date = $("#dateSelect").val();
+
+          $.get(`/messages?group_id=${groupId}&date=${date}`, function (data) {
+            exportToCSV(data, `messages_${date}_${groupId || "all"}.csv`);
+          });
+        });
+
+        // 导出总结历史
+        $("#exportSummaries").click(function () {
+          const groupId = $("#summaryGroupSelect").val();
+          const type = $("#summaryTypeSelect").val();
+
+          $.get(`/summaries?group_id=${groupId}&type=${type}`, function (data) {
+            exportToCSV(
+              data,
+              `summaries_${groupId || "all"}_${type || "all"}.csv`
+            );
+          });
+        });
+
+        // 加载总结数据
+        function loadSummaries() {
+          const groupId = $("#summaryGroupSelect").val();
+          const type = $("#summaryTypeSelect").val();
+
+          $.get(`/summaries?group_id=${groupId}&type=${type}`, function (data) {
+            summariesTable.clear();
+            data.forEach((summary) => {
+              summariesTable.row.add([
+                summary.timestamp,
+                summary.group_id,
+                summary.summary_type,
+                summary.content,
+              ]);
+            });
+            summariesTable.draw();
+
+            // 更新今日总结数
+            const today = new Date().toISOString().split("T")[0];
+            $("#todaySummaries").text(
+              data.filter((s) => s.timestamp.startsWith(today)).length
+            );
+          });
+        }
+
+        // 绑定事件处理
+        $("#groupSelect, #dateSelect").change(loadMessages);
+        $("#summaryGroupSelect, #summaryTypeSelect").change(loadSummaries);
+
+        // 初始化
+        initGroupSelect(); // 只在页面加载时初始化一次群组列表
+        loadSummaries();
+      });
+    </script>
+  </body>
+</html>
